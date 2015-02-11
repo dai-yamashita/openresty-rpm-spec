@@ -50,7 +50,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-#%{homedir}/*
+%{homedir}/*
 
 %attr(755,root,root) /etc/init.d/nginx
 %{homedir}/luajit/*
