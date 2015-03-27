@@ -1,5 +1,5 @@
 Name:		ngx_openresty
-Version:	1.7.2.1
+Version:	1.7.10.1
 Release:	1%{?dist}
 Summary:	a fast web app server by extending nginx
 
@@ -11,7 +11,20 @@ Source1:	https://github.com/brnt/openresty-rpm-spec/raw/master/nginx.init
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 BuildRequires:	sed openssl-devel pcre-devel readline-devel
+BuildRequires:  GeoIP-devel
+BuildRequires:  gd-devel
+BuildRequires:  libxslt-devel
+BuildRequires:  perl-devel
+BuildRequires:  perl(ExtUtils::Embed)
+BuildRequires:  zlib-devel
+
 Requires:	openssl pcre readline
+Requires:       GeoIP
+Requires:       gd
+Requires:       openssl
+Requires:       pcre
+Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
+
 Requires(pre):	shadow-utils
 
 %define user nginx
@@ -27,6 +40,29 @@ OpenResty (aka. ngx_openresty) is a full-fledged web application server by bundl
 
 %build
 ./configure --with-ipv6 --with-pcre-jit --with-luajit
+ \
+  --with-file-aio \
+  --with-http_ssl_module \
+  --with-http_realip_module \
+  --with-http_addition_module \
+  --with-http_xslt_module \
+  --with-http_image_filter_module \
+  --with-http_geoip_module \
+  --with-http_sub_module \
+  --with-http_dav_module \
+  --with-http_flv_module \
+  --with-http_mp4_module \
+  --with-http_gzip_static_module \
+  --with-http_random_index_module \
+  --with-http_secure_link_module \
+  --with-http_degradation_module \
+  --with-http_stub_status_module \
+  --with-mail \
+  --with-mail_ssl_module \
+  --with-debug \
+  --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
+  --with-ld-opt="-Wl,-E" # so the perl module finds its symbols
+
 make %{?_smp_mflags}
 
 
